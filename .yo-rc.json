@@ -1,0 +1,18 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.14.0",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "pnp-modern-search-summary-layout",
+    "libraryId": "92399909-1e7e-495b-98ea-a6f86df56009",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "pnp-modern-search-summary-layout",
+    "solutionShortDescription": "pnp-modern-search-summary-layout description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "library"
+  }
+}

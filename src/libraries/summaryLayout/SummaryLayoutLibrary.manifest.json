@@ -1,0 +1,9 @@
+{
+  "id": "f56d1194-fe7b-4a4c-9753-e93c3f489907",
+  "alias": "SummaryLayoutLibrary",
+  "componentType": "Library",
+
+  // The "*" signifies that the version should be taken from the package.json
+  "version": "*",
+  "manifestVersion": 2
+}
