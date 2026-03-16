@@ -11,7 +11,40 @@
       ]
     }
   },
-  "externals": {},
+  "externals": {
+    "@microsoft/sp-core-library": {
+      "path": "@microsoft/sp-core-library",
+      "globalName": "sp-core-library"
+    },
+    "@microsoft/sp-http": {
+      "path": "@microsoft/sp-http",
+      "globalName": "sp-http"
+    },
+    "@microsoft/sp-component-base": {
+      "path": "@microsoft/sp-component-base",
+      "globalName": "sp-component-base"
+    },
+    "@microsoft/sp-webpart-base": {
+      "path": "@microsoft/sp-webpart-base",
+      "globalName": "sp-webpart-base"
+    },
+    "@microsoft/sp-property-pane": {
+      "path": "@microsoft/sp-property-pane",
+      "globalName": "sp-property-pane"
+    },
+    "@microsoft/sp-page-context": {
+      "path": "@microsoft/sp-page-context",
+      "globalName": "sp-page-context"
+    },
+    "@microsoft/sp-lodash-subset": {
+      "path": "@microsoft/sp-lodash-subset",
+      "globalName": "sp-lodash-subset"
+    },
+    "@microsoft/sp-adaptive-card-extension-base": {
+      "path": "@microsoft/sp-adaptive-card-extension-base",
+      "globalName": "sp-adaptive-card-extension-base"
+    }
+  },
   "localizedResources": {
     "SummaryLayoutLibraryStrings": "lib/libraries/summaryLayout/loc/{locale}.js"
   }
