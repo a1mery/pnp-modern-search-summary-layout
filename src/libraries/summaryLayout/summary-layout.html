@@ -1,0 +1,297 @@
+<content id="template">
+    <style>
+        .summary-layout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .doc-card {
+            background-color: #fff;
+            border: 1px solid #e1dfdd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .doc-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .doc-card-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 16px 12px;
+            gap: 12px;
+        }
+
+        .doc-card-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        .doc-card-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .doc-card-icon-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: #185abd;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .doc-card-title-area {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .doc-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #323130;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .doc-card-title a {
+            color: #0078d4;
+            text-decoration: none;
+        }
+
+        .doc-card-title a:hover {
+            text-decoration: underline;
+        }
+
+        .doc-card-meta {
+            font-size: 12px;
+            color: #605e5c;
+            margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .doc-card-body {
+            padding: 0 16px 12px;
+        }
+
+        .doc-card-description {
+            font-size: 13px;
+            color: #605e5c;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .doc-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-top: 1px solid #edebe9;
+            gap: 8px;
+        }
+
+        .doc-card-date {
+            font-size: 12px;
+            color: #8a8886;
+            flex-shrink: 0;
+        }
+
+        .doc-card-filetype {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: white;
+            background-color: #185abd;
+        }
+
+        .doc-card-filetype.pdf {
+            background-color: #d13438;
+        }
+
+        .doc-card-filetype.pptx {
+            background-color: #b7472a;
+        }
+
+        .doc-card-filetype.xlsx {
+            background-color: #217346;
+        }
+
+        .doc-card-filetype.docx {
+            background-color: #185abd;
+        }
+    </style>
+
+    <div class="summary-layout-grid">
+        {{#each data.items as |item|}}
+        <div class="doc-card">
+            <div class="doc-card-header">
+                {{#if item.IconSrc}}
+                <div class="doc-card-icon">
+                    <img src="{{item.IconSrc}}" alt="{{item.FileType}}" />
+                </div>
+                {{else}}
+                <div class="doc-card-icon-placeholder">
+                    {{getFileTypeAbbreviation item.FileType}}
+                </div>
+                {{/if}}
+                <div class="doc-card-title-area">
+                    <h3 class="doc-card-title">
+                        <a href="{{item.OriginalPath}}" target="_blank" title="{{item.Title}}">{{item.Title}}</a>
+                    </h3>
+                    <div class="doc-card-meta">
+                        {{item.Author}}
+                    </div>
+                </div>
+            </div>
+
+            {{#if item.HitHighlightedSummary}}
+            <div class="doc-card-body">
+                <div class="doc-card-description">
+                    {{{item.HitHighlightedSummary}}}
+                </div>
+            </div>
+            {{/if}}
+
+            <div class="doc-card-footer">
+                <div>
+                    {{#if item.FileType}}
+                    <span class="doc-card-filetype {{item.FileType}}">{{item.FileType}}</span>
+                    {{/if}}
+                    {{#if item.LastModifiedTime}}
+                    <span class="doc-card-date">{{getDate item.LastModifiedTime "MM/DD/YYYY"}}</span>
+                    {{/if}}
+                </div>
+                <document-summary
+                    data-document-url="{{item.OriginalPath}}"
+                    data-title="{{item.Title}}">
+                </document-summary>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    {{#if @root.properties.paging.showPaging}}
+    {{#gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage}}
+    <pnp-pagination
+        data-total-items="{{@root.data.totalItemsCount}}"
+        data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
+        data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
+        data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
+        data-range="{{@root.properties.paging.pagingRange}}"
+        data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}"
+        data-current-page-number="{{@root.paging.currentPageNumber}}"
+        data-theme-variant="{{JSONstringify @root.theme}}">
+    </pnp-pagination>
+    {{/gt}}
+    {{/if}}
+</content>
+
+<content id="placeholder">
+    <style>
+        .summary-placeholder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .summary-placeholder-card {
+            background-color: #fff;
+            border: 1px solid #e1dfdd;
+            border-radius: 8px;
+            padding: 16px;
+            animation: summary-shimmer 1.5s infinite;
+        }
+
+        .summary-placeholder-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-placeholder-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #f3f2f1;
+            border-radius: 6px;
+        }
+
+        .summary-placeholder-title {
+            height: 14px;
+            background-color: #f3f2f1;
+            border-radius: 4px;
+            width: 70%;
+        }
+
+        .summary-placeholder-line {
+            height: 10px;
+            background-color: #f3f2f1;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .summary-placeholder-line.short {
+            width: 50%;
+        }
+
+        @keyframes summary-shimmer {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+
+    <div class="summary-placeholder-grid">
+        <div class="summary-placeholder-card">
+            <div class="summary-placeholder-header">
+                <div class="summary-placeholder-icon"></div>
+                <div class="summary-placeholder-title"></div>
+            </div>
+            <div class="summary-placeholder-line"></div>
+            <div class="summary-placeholder-line"></div>
+            <div class="summary-placeholder-line short"></div>
+        </div>
+        <div class="summary-placeholder-card">
+            <div class="summary-placeholder-header">
+                <div class="summary-placeholder-icon"></div>
+                <div class="summary-placeholder-title"></div>
+            </div>
+            <div class="summary-placeholder-line"></div>
+            <div class="summary-placeholder-line"></div>
+            <div class="summary-placeholder-line short"></div>
+        </div>
+        <div class="summary-placeholder-card">
+            <div class="summary-placeholder-header">
+                <div class="summary-placeholder-icon"></div>
+                <div class="summary-placeholder-title"></div>
+            </div>
+            <div class="summary-placeholder-line"></div>
+            <div class="summary-placeholder-line"></div>
+            <div class="summary-placeholder-line short"></div>
+        </div>
+    </div>
+</content>
