@@ -14,7 +14,3 @@ To build custom layouts for the PnP Modern Search web part, use following links 
 * [Create a custom web component](https://microsoft-search.github.io/pnp-modern-search/extensibility/custom_web_component/)
 * [pnp-modern-search-page-status-layout](https://github.com/a1mery/pnp-modern-search-page-status-layout)
 
-To use the Copilot retrieval API, use following links as reference:
-* https://www.puntobello.ch/en/nello/copilot_api_showcase/
-* https://www.federicoporceddu.com/2025/12/28/copilot-apis-for-m365-developers-01-getting-started
-
