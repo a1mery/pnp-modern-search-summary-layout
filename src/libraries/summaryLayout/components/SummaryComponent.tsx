@@ -52,6 +52,46 @@ export class DocumentSummaryButton extends React.Component<IDocumentSummaryButto
         };
     }
 
+    /**
+     * Converts Copilot markdown response to safe HTML.
+     * Handles: bold, italic, links, citations [n](url), line breaks, and paragraphs.
+     */
+    private markdownToHtml(md: string): string {
+        let html = md;
+
+        // Escape HTML entities to prevent XSS
+        html = html
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+
+        // Bold: **text**
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+        // Italic: *text* (but not inside bold markers)
+        html = html.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+
+        // Citation references: [n](url) — render as superscript link
+        html = html.replace(/\[(\d+)\]\((https?:\/\/[^\s)]+)\)/g,
+            '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#0078d4;text-decoration:none;font-size:11px;vertical-align:super">[$1]</a>');
+
+        // Inline links: [text](url)
+        html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+            '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#0078d4;text-decoration:none">$1</a>');
+
+        // Paragraphs: double newlines
+        html = html.replace(/\n\n+/g, '</p><p>');
+
+        // Single line breaks
+        html = html.replace(/\n/g, '<br/>');
+
+        // Wrap in paragraph tags
+        html = '<p>' + html + '</p>';
+
+        return html;
+    }
+
     private handleSummarizeClick = (): void => {
         this.setState({
             showDialog: true,
@@ -90,7 +130,7 @@ export class DocumentSummaryButton extends React.Component<IDocumentSummaryButto
                 .api(`https://graph.microsoft.com/beta/copilot/conversations/${conversationId}/chat`)
                 .post({
                     message: {
-                        text: 'Provide a concise summary of this document (approximately 3-4 sentences). Focus on the key points and main takeaways. Avoid including minor details or irrelevant information. Provide clean formatting with clear paragraphs.',
+                        text: 'Provide a concise summary of this document. Focus on the key points and main takeaways. Avoid including minor details or irrelevant information. Use bullet points if it helps clarity.',
                     },
                     locationHint: {
                         timeZone: timeZone
@@ -194,17 +234,17 @@ export class DocumentSummaryButton extends React.Component<IDocumentSummaryButto
                             {error}
                         </MessageBar>
                     ) : summary ? (
-                        <div style={{
-                            padding: '10px 0',
-                            lineHeight: '1.6',
-                            fontSize: '14px',
-                            color: '#323130',
-                            maxHeight: '400px',
-                            overflowY: 'auto',
-                            whiteSpace: 'pre-wrap'
-                        }}>
-                            {summary}
-                        </div>
+                        <div
+                            style={{
+                                padding: '10px 0',
+                                lineHeight: '1.6',
+                                fontSize: '14px',
+                                color: '#323130',
+                                maxHeight: '400px',
+                                overflowY: 'auto'
+                            }}
+                            dangerouslySetInnerHTML={{ __html: this.markdownToHtml(summary) }}
+                        />
                     ) : null}
                     <DialogFooter>
                         <DefaultButton onClick={this.closeDialog} text="Close" disabled={isLoading} />
