@@ -9,6 +9,8 @@ import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Icon } from '@fluentui/react/lib/Icon';
 
+export const DEFAULT_COPILOT_PROMPT = 'Provide a concise summary of this document. Focus on the key points and main takeaways. Avoid including minor details or irrelevant information. Use bullet points if it helps clarity.';
+
 export class DocumentSummaryWebComponent extends BaseWebComponent {
 
     public constructor() {
@@ -31,6 +33,7 @@ export interface IDocumentSummaryButtonProps {
     serviceScope: ServiceScope;
     documentUrl?: string;
     title?: string;
+    promptText?: string;
 }
 
 export interface IDocumentSummaryButtonState {
@@ -126,11 +129,14 @@ export class DocumentSummaryButton extends React.Component<IDocumentSummaryButto
 
             // Step 2: Send a message asking to summarize the document
             const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+            const promptText = (this.props.promptText && this.props.promptText.trim().length > 0)
+                ? this.props.promptText
+                : DEFAULT_COPILOT_PROMPT;
             const chatResponse = await graphClient
                 .api(`https://graph.microsoft.com/beta/copilot/conversations/${conversationId}/chat`)
                 .post({
                     message: {
-                        text: 'Provide a concise summary of this document. Focus on the key points and main takeaways. Avoid including minor details or irrelevant information. Use bullet points if it helps clarity.',
+                        text: promptText,
                     },
                     locationHint: {
                         timeZone: timeZone
