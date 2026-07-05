@@ -10,14 +10,32 @@ import {
   LayoutRenderType,
   BaseLayout
 } from '@pnp/modern-search-extensibility';
-import { DocumentSummaryWebComponent } from './components/SummaryComponent';
+import { DocumentSummaryWebComponent, DEFAULT_COPILOT_PROMPT } from './components/SummaryComponent';
 import { ServiceKey, ServiceScope } from '@microsoft/sp-core-library';
+import { IPropertyPaneField, PropertyPaneTextField } from '@microsoft/sp-property-pane';
+import * as strings from 'SummaryLayoutLibraryStrings';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ISummaryLayoutProperties {
+  copilotPromptText: string;
 }
 
 export class SummaryLayout extends BaseLayout<ISummaryLayoutProperties> {
+
+  public onInit(): void {
+    this.properties.copilotPromptText = this.properties.copilotPromptText || DEFAULT_COPILOT_PROMPT;
+  }
+
+  public getPropertyPaneFieldsConfiguration(_availableFields: string[]): IPropertyPaneField<unknown>[] {
+    return [
+      PropertyPaneTextField('copilotPromptText', {
+        label: strings.CopilotPromptFieldLabel,
+        description: strings.CopilotPromptFieldDescription,
+        multiline: true,
+        rows: 4,
+        value: this.properties.copilotPromptText
+      })
+    ];
+  }
 }
 
 export class SummaryLayoutLibrary implements IExtensibilityLibrary {
